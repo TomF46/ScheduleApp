@@ -1,0 +1,97 @@
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Nunito");
+
+// Variables
+@import "variables";
+
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+
+@import "tailwindcss/utilities";
+
+body {
+    background-color: #efefef;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.pageHeader {
+    border-bottom: 1px solid #dedede;
+}
+nav {
+    background-color: #fefefe;
+    z-index: 999;
+}
+
+.vertical-centered {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.centerFormCardContainer {
+    width: 100%;
+    .centerFormCard {
+        margin: 0 auto;
+    }
+}
+
+.card,
+.page {
+    background-color: #fefefe;
+}
+
+.page {
+    padding-bottom: 1.4rem;
+}
+
+.overflow-visible {
+    overflow: visible;
+}
+
+#react-confirm-alert {
+    .react-confirm-alert-overlay {
+        background-color: #dda74f;
+        .react-confirm-alert-button-group {
+            justify-content: center;
+            button {
+                background-color: #181619;
+                color: #dda74f;
+            }
+        }
+    }
+}
+
+.centered {
+    margin: 0 auto;
+}
+
+.vertical-centered {
+    margin: auto 0;
+}
+
+.fade-enter {
+    opacity: 0.01;
+}
+
+.fade-enter.fade-enter-active {
+    opacity: 1;
+    transition: opacity 150ms ease-in;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+    opacity: 0.01;
+    transition: opacity 150ms ease-in;
+}
+
+div.transition-group {
+    position: relative;
+}
