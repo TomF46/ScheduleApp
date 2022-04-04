@@ -30,7 +30,11 @@ Route::group([
 });
 
 Route::middleware(['auth:api'])->group(function () {  
+    Route::get('/tasks', [App\Http\Controllers\TasksController::class, 'index']);
+    Route::get('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'show']);
 });
 
 Route::middleware(['auth:api', 'admin'])->group(function () {
+    Route::post('/tasks', [App\Http\Controllers\TasksController::class, 'store']);
+    Route::put('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'update']);
 });
