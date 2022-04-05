@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\UserAssignable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory, UserAssignable;
 
     public $timestamps = false;
 
@@ -30,7 +32,10 @@ class Task extends Model
             'title' => $this->title,
             'description' => $this->description,
             'start_time' => $this->start_time,
-            'end_time' => $this->end_time
+            'end_time' => $this->end_time,
+            'assignedUsers' => $this->assignedUsers()->get()->map(function ($user) {
+                return $user->map();
+            })
         ];
     }
 }

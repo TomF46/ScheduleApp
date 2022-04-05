@@ -38,4 +38,6 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::post('/tasks', [App\Http\Controllers\TasksController::class, 'store']);
     Route::put('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'update']);
     Route::delete('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'destroy']);
+    Route::post('/tasks/{task}/assign/{user}', [App\Http\Controllers\TasksController::class, 'assign']);
+    Route::post('/tasks/{task}/unassign/{user}', [App\Http\Controllers\TasksController::class, 'unassign']);
 });

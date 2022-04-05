@@ -55,6 +55,11 @@ class User extends Authenticatable
         return "{$this->firstName} {$this->lastName}";
     }
 
+    public function assignedTasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user_assignments', 'user_id', 'task_id');
+    }
+
     public function map()
     {
         return [

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TasksController extends Controller
@@ -48,6 +49,26 @@ class TasksController extends Controller
     {
         $task->delete();
         return response()->noContent();
+    }
+
+    public function assign(Request $request, Task $task, User $user)
+    {
+        // If user is already assigned immediately return success
+        if($task->userIsAssigned($user)) return response()->json($task->map());
+
+        $task->assign($user);
+        $task = $task->fresh();
+        return response()->json($task->map());
+    }
+
+    public function unassign(Request $request, Task $task, User $user)
+    {
+        // If user is already unassigned immediately return success
+        if(!$task->userIsAssigned($user)) return response()->json($task->map());
+
+        $task->unassign($user);
+        $task = $task->fresh();
+        return response()->json($task->map());
     }
 
     protected function validateTask(Request $request)

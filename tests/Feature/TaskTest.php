@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -34,7 +35,7 @@ class TaskTest extends TestCase
 
     public function testCanGetSpecificTask()
     {
-        $task = $this->testTask = Task::factory()->create();
+        $task = Task::factory()->create();
         $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
@@ -64,7 +65,7 @@ class TaskTest extends TestCase
 
     public function testCanUpdateTask()
     {
-        $task = $this->testTask = Task::factory()->create();
+        $task = Task::factory()->create();
 
         $updatedBody = [
             "title" => "Updated Test Task",
@@ -86,7 +87,7 @@ class TaskTest extends TestCase
 
     public function testCanDeleteTask()
     {
-        $task = $this->testTask = Task::factory()->create();
+        $task = Task::factory()->create();
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
@@ -94,5 +95,77 @@ class TaskTest extends TestCase
         ])->delete('/api/tasks/' . $task->id);
 
         $response->assertNoContent();
+    }
+
+    public function testCanAssignUserToTask()
+    {
+        $task = Task::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/assign/' . $user->id);
+
+        $response->assertOk();
+        $response->assertJsonCount(1, "assignedUsers");
+    }
+
+    public function testCanUnassignUserToTask()
+    {
+        $task = Task::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/assign/' . $user->id);
+
+        $response->assertOk();
+        $response->assertJsonCount(1, "assignedUsers");
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/unassign/' . $user->id);
+
+        $response->assertOk();
+        $response->assertJsonCount(0, "assignedUsers");
+    }
+
+    public function testAssigningAlreadyAssignUserToTaskIsSuccess()
+    {
+        $task = Task::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/assign/' . $user->id);
+
+        $response->assertOk();
+        $response->assertJsonCount(1, "assignedUsers");
+
+        $response2 = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/assign/' . $user->id);
+
+        $response2->assertOk();
+        $response2->assertJsonCount(1, "assignedUsers");
+    }
+
+    public function testUnassigningUserToTaskWhoIsNotAssignedIsSuccess()
+    {
+        $task = Task::factory()->create();
+        $user = User::factory()->create();
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/unassign/' . $user->id);
+
+        $response->assertOk();
+        $response->assertJsonCount(0, "assignedUsers");
     }
 }
