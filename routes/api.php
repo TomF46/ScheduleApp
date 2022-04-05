@@ -32,6 +32,10 @@ Route::group([
 Route::middleware(['auth:api'])->group(function () {  
     Route::get('/tasks', [App\Http\Controllers\TasksController::class, 'index']);
     Route::get('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'show']);
+    Route::post('/tasks/{task}/status/notStarted', [App\Http\Controllers\TasksController::class, 'notStarted']);
+    Route::post('/tasks/{task}/status/inProgress', [App\Http\Controllers\TasksController::class, 'inProgress']);
+    Route::post('/tasks/{task}/status/completed', [App\Http\Controllers\TasksController::class, 'completed']);
+
 });
 
 Route::middleware(['auth:api', 'admin'])->group(function () {

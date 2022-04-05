@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Enums\TaskStatus;
 use Illuminate\Http\Request;
 
 class TasksController extends Controller
@@ -67,6 +68,27 @@ class TasksController extends Controller
         if(!$task->userIsAssigned($user)) return response()->json($task->map());
 
         $task->unassign($user);
+        $task = $task->fresh();
+        return response()->json($task->map());
+    }
+
+    public function inProgress(Request $request, Task $task)
+    {
+        $task->setStatus(TaskStatus::InProgress);
+        $task = $task->fresh();
+        return response()->json($task->map());
+    }
+
+    public function notStarted(Request $request, Task $task)
+    {
+        $task->setStatus(TaskStatus::NotStarted);
+        $task = $task->fresh();
+        return response()->json($task->map());
+    }
+
+    public function completed(Request $request, Task $task)
+    {
+        $task->setStatus(TaskStatus::Completed);
         $task = $task->fresh();
         return response()->json($task->map());
     }

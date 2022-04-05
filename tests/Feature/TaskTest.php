@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -167,5 +168,56 @@ class TaskTest extends TestCase
 
         $response->assertOk();
         $response->assertJsonCount(0, "assignedUsers");
+    }
+
+    public function testCanSetTaskStatusToInProgress()
+    {
+        $task = Task::factory()->create([
+            'status' => TaskStatus::NotStarted
+        ]);
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/status/inProgress');
+
+        $response->assertOk();
+        $response->assertJson([
+            'status' => TaskStatus::InProgress
+        ]);
+    }
+
+    public function testCanSetTaskStatusToCompleted()
+    {
+        $task = Task::factory()->create([
+            'status' => TaskStatus::InProgress
+        ]);
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/status/completed');
+
+        $response->assertOk();
+        $response->assertJson([
+            'status' => TaskStatus::Completed
+        ]);
+    }
+
+    public function testCanSetTaskStatusToNotStarted()
+    {
+        $task = Task::factory()->create([
+            'status' => TaskStatus::InProgress
+        ]);
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->post('/api/tasks/' . $task->id . '/status/notStarted');
+
+        $response->assertOk();
+        $response->assertJson([
+            'status' => TaskStatus::NotStarted
+        ]);
     }
 }
