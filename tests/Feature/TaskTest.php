@@ -45,47 +45,54 @@ class TaskTest extends TestCase
         ]);
     }
 
-    // public function testCanAddTask()
-    // {
-    //     $response = $this->withHeaders([
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
-    //     ])->postJson(
-    //         '/api/tasks',
-    //         [
-    //             "id" => null,
-    //             "title" => "Simple Test Task",
-    //             "description" => "A simple test task",
-    //             "tags" => [],
-    //             "collaborators" => [],
-    //             "questions" =>
-    //             [
-    //                 [
-    //                     "text" => "What is 1 + 1?",
-    //                     "helpText" => null,
-    //                     "answers" => [
-    //                         [
-    //                             "text" => "5",
-    //                             "is_correct" => false
-    //                         ],
-    //                         [
-    //                             "text" => "3",
-    //                             "is_correct" => false
-    //                         ],
-    //                         [
-    //                             "text" => "2",
-    //                             "is_correct" => true
-    //                         ],
-    //                         [
-    //                             "text" => "0",
-    //                             "is_correct" => false
-    //                         ]
-    //                     ],
-    //                     "image_url" => null
-    //                 ]
-    //             ]
-    //         ]
-    //     );
-    //     $response->assertStatus(201);
-    // }
+    public function testCanAddTask()
+    {
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->postJson(
+            '/api/tasks',
+            [
+                "title" => "Simple Test Task",
+                "description" => "A simple test task",
+                'start_time' => now()->format('Y-m-d H:i:s'),
+                'end_time' =>  now()->add(1, 'day')->format('Y-m-d H:i:s')
+            ]
+        );
+        $response->assertStatus(201);
+    }
+
+    public function testCanUpdateTask()
+    {
+        $task = $this->testTask = Task::factory()->create();
+
+        $updatedBody = [
+            "title" => "Updated Test Task",
+            "description" => "An updated test task",
+            'start_time' => now()->format('Y-m-d H:i:s'),
+            'end_time' =>  now()->add(1, 'day')->format('Y-m-d H:i:s')
+        ];
+        
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->putJson(
+            '/api/tasks/' . $task->id, $updatedBody
+        );
+
+        $response->assertOk();
+        $response->assertJson($updatedBody);
+    }
+
+    public function testCanDeleteTask()
+    {
+        $task = $this->testTask = Task::factory()->create();
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($this->user)
+        ])->delete('/api/tasks/' . $task->id);
+
+        $response->assertNoContent();
+    }
 }
