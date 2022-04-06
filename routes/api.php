@@ -30,6 +30,8 @@ Route::group([
 });
 
 Route::middleware(['auth:api'])->group(function () {  
+    Route::get('/me/isAdmin', [App\Http\Controllers\MeController::class, 'isAdmin']);
+
     Route::get('/tasks', [App\Http\Controllers\TasksController::class, 'index']);
     Route::get('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'show']);
     Route::post('/tasks/{task}/status/notStarted', [App\Http\Controllers\TasksController::class, 'notStarted']);
@@ -39,6 +41,14 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::middleware(['auth:api', 'admin'])->group(function () {
+
+    Route::get('/users', [App\Http\Controllers\UsersController::class, 'index']);
+    Route::get('/users/{user}', [App\Http\Controllers\UsersController::class, 'show']);
+    Route::put('/users/{user}', [App\Http\Controllers\UsersController::class, 'update']);
+    Route::delete('/users/{user}', [App\Http\Controllers\UsersController::class, 'delete']);
+    Route::post('/users/search', [App\Http\Controllers\UsersController::class, 'filter']);
+
+
     Route::post('/tasks', [App\Http\Controllers\TasksController::class, 'store']);
     Route::put('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'update']);
     Route::delete('/tasks/{task}', [App\Http\Controllers\TasksController::class, 'destroy']);

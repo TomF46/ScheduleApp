@@ -220,4 +220,24 @@ class TaskTest extends TestCase
             'status' => TaskStatus::NotStarted
         ]);
     }
+
+    public function testNonAdminCantAddTask()
+    {
+
+        $user = TestHelper::createUser();
+
+        $response = $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . TestHelper::getBearerTokenForUser($user)
+        ])->postJson(
+            '/api/tasks',
+            [
+                "title" => "Simple Test Task",
+                "description" => "A simple test task",
+                'start_time' => now()->format('Y-m-d H:i:s'),
+                'end_time' =>  now()->add(1, 'day')->format('Y-m-d H:i:s')
+            ]
+        );
+        $response->assertForbidden();
+    }
 }
